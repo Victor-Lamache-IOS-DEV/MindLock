@@ -1,0 +1,57 @@
+name: MindLock
+options:
+  bundleIdPrefix: com.victorlamache
+  deploymentTarget:
+    iOS: "16.0"
+
+targets:
+  MindLock:
+    type: application
+    platform: iOS
+    sources:
+      - MindLock
+    info:
+      path: MindLock/Info.plist
+      properties:
+        CFBundleDisplayName: "Notes+"
+        CFBundleName: "MindLock"
+        UILaunchScreen:
+          UIColorName: ""
+        UIStatusBarHidden: true
+        UIViewControllerBasedStatusBarAppearance: false
+        UIRequiresFullScreen: true
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.victorlamache.mindlockdev
+        DEVELOPMENT_TEAM: A63WD37CXZ
+        CODE_SIGN_STYLE: Manual
+        PROVISIONING_PROFILE_SPECIFIER: "Victor Lamache Dev Profile"
+        CODE_SIGN_IDENTITY: "Apple Development"
+        SWIFT_VERSION: "5.9"
+        TARGETED_DEVICE_FAMILY: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+    dependencies:
+      - sdk: AVFoundation.framework
+      - sdk: MediaPlayer.framework
+      - sdk: PhotosUI.framework
+
+  MindLockTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - MindLockTests
+    dependencies:
+      - target: MindLock
+    info:
+      path: MindLockTests/Info.plist
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.victorlamache.mindlockdev.tests
+        CODE_SIGNING_ALLOWED: NO
+        CODE_SIGNING_REQUIRED: NO
+        CODE_SIGN_IDENTITY: ""
+        SWIFT_VERSION: "5.9"

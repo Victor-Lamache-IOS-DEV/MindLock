@@ -1,0 +1,14 @@
+# Xcode
+.DS_Store
+build/
+DerivedData/
+*.xcodeproj
+*.xcworkspace
+*.ipa
+.build/
+
+# Signing files (keep private)
+*.p12
+*.mobileprovision
+*.cer
+*.key
