@@ -28,32 +28,34 @@ public struct FakeStatusBar: View {
     }
 
     public var body: some View {
-        ZStack(alignment: .topLeading) {
-            // Opérateur à gauche
-            Text(carrierName)
-                .font(.system(size: layout.carrierFontSize, weight: .semibold))
-                .foregroundColor(.white)
-                .position(x: layout.carrierLeftX + 30, y: layout.carrierCenterY)
+        ZStack(alignment: .top) {
+            // Ligne principale de la barre d'état (Opérateur à gauche, Icônes à droite)
+            HStack(alignment: .center) {
+                Text(carrierName)
+                    .font(.system(size: layout.carrierFontSize, weight: .semibold))
+                    .foregroundColor(.white)
+                    .padding(.leading, layout.carrierLeftX)
 
-            // Groupe d'icônes à droite (Réseau, Wi-Fi, Batterie)
-            HStack(alignment: .center, spacing: layout.rightIconSpacing) {
-                // Signal cellulaire dessiné
-                cellularSignalView
+                Spacer()
 
-                // Icône Wi-Fi
-                if showWifi {
-                    Image(systemName: "wifi")
-                        .font(.system(size: layout.wifiFontSize, weight: .semibold))
-                        .foregroundColor(.white)
+                HStack(alignment: .center, spacing: layout.rightIconSpacing) {
+                    // Signal cellulaire dessiné
+                    cellularSignalView
+
+                    // Icône Wi-Fi
+                    if showWifi {
+                        Image(systemName: "wifi")
+                            .font(.system(size: layout.wifiFontSize, weight: .semibold))
+                            .foregroundColor(.white)
+                    }
+
+                    // Batterie dessinée
+                    batteryView
                 }
-
-                // Batterie dessinée
-                batteryView
+                .padding(.trailing, max(0, layout.screenWidth - layout.batteryRightX))
             }
-            .position(
-                x: layout.batteryRightX - 35,
-                y: layout.rightIconsCenterY
-            )
+            .frame(width: layout.screenWidth)
+            .position(x: layout.screenWidth / 2.0, y: layout.carrierCenterY)
 
             // Indicateur du Centre de contrôle (sur LOCK uniquement)
             if showControlCenterIndicator {
@@ -67,7 +69,8 @@ public struct FakeStatusBar: View {
                     )
             }
         }
-        .frame(width: layout.screenWidth, height: 60)
+        .frame(width: layout.screenWidth, height: layout.screenHeight, alignment: .top)
+        .allowsHitTesting(false)
         .onAppear {
             updateBatteryStatus()
             UIDevice.current.isBatteryMonitoringEnabled = true

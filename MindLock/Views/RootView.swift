@@ -139,6 +139,9 @@ public struct RootView: View {
                     notifIcon: imageStore.image(for: .notifIcon),
                     onSwipeUpToPasscode: {
                         transitionToPasscode()
+                    },
+                    onOpenSettings: {
+                        showSettings = true
                     }
                 )
 

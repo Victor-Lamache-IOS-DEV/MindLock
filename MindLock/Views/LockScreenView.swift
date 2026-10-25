@@ -8,6 +8,7 @@ public struct LockScreenView: View {
     let armedCode: String?
     let notifIcon: UIImage?
     var onSwipeUpToPasscode: () -> Void
+    var onOpenSettings: (() -> Void)?
 
     @State private var dragOffsetY: CGFloat = 0.0
     @State private var currentDate: Date = Date()
@@ -26,24 +27,30 @@ public struct LockScreenView: View {
         settings: AppSettings,
         armedCode: String?,
         notifIcon: UIImage?,
-        onSwipeUpToPasscode: @escaping () -> Void
+        onSwipeUpToPasscode: @escaping () -> Void,
+        onOpenSettings: (() -> Void)? = nil
     ) {
         self.layout = layout
         self.settings = settings
         self.armedCode = armedCode
         self.notifIcon = notifIcon
         self.onSwipeUpToPasscode = onSwipeUpToPasscode
+        self.onOpenSettings = onOpenSettings
     }
 
     public var body: some View {
         ZStack {
             // Contenu déplaçable avec le geste de glissement vers le haut (50% de la translation)
             ZStack {
-                // Cadenas
+                // Cadenas (avec secours triple-tap pour ouvrir les réglages)
                 Image(systemName: "lock.fill")
                     .font(.system(size: layout.lockPadlockSize, weight: .semibold))
                     .foregroundColor(.white)
                     .position(x: layout.lockPadlockX, y: layout.lockPadlockY)
+                    .onTapGesture(count: 3) {
+                        Haptics.settingsOpened()
+                        onOpenSettings?()
+                    }
 
                 // Date
                 Text(formattedDate)

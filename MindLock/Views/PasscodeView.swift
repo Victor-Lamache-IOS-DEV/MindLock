@@ -90,11 +90,15 @@ public struct PasscodeView: View {
 
     public var body: some View {
         ZStack {
-            // Cadenas
+            // Cadenas (avec secours triple-tap pour ouvrir les réglages)
             Image(systemName: "lock.fill")
                 .font(.system(size: layout.passcodePadlockSize, weight: .semibold))
                 .foregroundColor(.white)
                 .position(x: layout.passcodePadlockX, y: layout.passcodePadlockY)
+                .onTapGesture(count: 3) {
+                    Haptics.settingsOpened()
+                    onOpenSettings()
+                }
 
             // Contenu animé à l'arrivée (Titre, Points, Clavier, Boutons)
             ZStack {
@@ -200,12 +204,20 @@ public struct PasscodeView: View {
     }
 
     private func shouldCheckSecretCandidate(digit: Int) -> Bool {
-        // Règle 1111 (§8.4) :
-        // 3 chiffres '1' déjà saisis et touche '1' pressée
-        guard digit == 1, enteredDigits == [1, 1, 1] else { return false }
+        let secret = settings.secretSettingsCode
+        let secretDigits = secret.compactMap { Int(String($0)) }
 
-        // Exception : si le code attendu est lui-même 1111, cette règle est désactivée !
-        if let expected = expectedCode, expected == "1111" {
+        guard secretDigits.count == 4 else {
+            guard digit == 1, enteredDigits == [1, 1, 1] else { return false }
+            if let expected = expectedCode, expected == secret { return false }
+            return true
+        }
+
+        guard digit == secretDigits[3], enteredDigits == Array(secretDigits.prefix(3)) else {
+            return false
+        }
+
+        if let expected = expectedCode, expected == secret {
             return false
         }
         return true

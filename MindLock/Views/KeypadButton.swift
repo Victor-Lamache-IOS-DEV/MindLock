@@ -13,6 +13,7 @@ public struct KeypadButton: View {
     var onSecretHoldTriggered: () -> Void
 
     @State private var isTouchPressed: Bool = false
+    @State private var isHandlingSecretHold: Bool = false
     @State private var holdTimerTask: Task<Void, Never>?
     @State private var didTriggerHold: Bool = false
 
@@ -88,17 +89,20 @@ public struct KeypadButton: View {
 
         if isSecretKeyCandidate {
             // Appui secret potentiel : on ne valide pas immédiatement au touch-down
+            isHandlingSecretHold = true
             holdTimerTask?.cancel()
             holdTimerTask = Task {
                 try? await Task.sleep(nanoseconds: 1_000_000_000) // 1.0 s
                 guard !Task.isCancelled else { return }
                 await MainActor.run {
                     didTriggerHold = true
+                    isHandlingSecretHold = false
                     onSecretHoldTriggered()
                 }
             }
         } else {
             // Touche classique : enregistrement au touch-down immédiat
+            isHandlingSecretHold = false
             onTouchDown()
         }
     }
@@ -108,7 +112,8 @@ public struct KeypadButton: View {
         holdTimerTask?.cancel()
         holdTimerTask = nil
 
-        if isSecretKeyCandidate {
+        if isHandlingSecretHold {
+            isHandlingSecretHold = false
             if !didTriggerHold {
                 // Relâché avant 1.0 s : validation normale du chiffre
                 onTouchDown()
