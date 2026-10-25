@@ -5,7 +5,7 @@ import XCTest
 final class VolumeInputLogicTests: XCTestCase {
 
     func testSequence2580ByDirectionSwitching() {
-        let engine = VolumeInputLogicEngine(digitCommitTimeout: 10, codeCompletionTimeout: 10, hapticPerDigit: false)
+        let engine = VolumeInputLogicEngine(digitCommitTimeout: 10, codeCompletionTimeout: 10, hapticPerDigit: true)
 
         var committedDigits: [Int] = []
         engine.onDigitCommitted = {

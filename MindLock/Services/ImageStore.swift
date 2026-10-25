@@ -77,9 +77,8 @@ public final class ImageStore: ObservableObject {
     public func remove(slot: Slot) {
         images[slot] = nil
         let targetURL = fileURL(for: slot)
-        DispatchQueue.global(qos: .background).async { [weak self] in
-            guard let self = self else { return }
-            try? self.fileManager.removeItem(at: targetURL)
+        DispatchQueue.global(qos: .background).async {
+            try? FileManager.default.removeItem(at: targetURL)
         }
     }
 

@@ -121,9 +121,7 @@ public final class VolumeInputLogicEngine: ObservableObject {
         currentSeriesPresses = 0
         currentDirection = nil
 
-        if hapticPerDigit {
-            onDigitCommitted?()
-        }
+        onDigitCommitted?()
 
         // Si 6 chiffres sont déjà saisis, finaliser le code automatiquement
         if pendingDigits.count == 6 {
@@ -247,7 +245,8 @@ public final class VolumeCodeService: ObservableObject {
             .assign(to: &$armedCode)
 
         // Haptiques
-        engine.onDigitCommitted = {
+        engine.onDigitCommitted = { [weak self] in
+            guard let self = self, self.engine.hapticPerDigit else { return }
             Haptics.digitCommitted()
         }
         engine.onCodeAccepted = { _ in
